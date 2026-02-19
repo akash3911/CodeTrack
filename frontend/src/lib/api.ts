@@ -1,14 +1,16 @@
+import { getIdToken } from "./auth";
+
 // API configuration and utilities
 const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
 
-// Get auth token from localStorage
-const getAuthToken = (): string | null => {
-  return localStorage.getItem('token');
+// Get auth token from Firebase (if signed in)
+const getAuthToken = async (): Promise<string | null> => {
+  return getIdToken();
 };
 
 // API request wrapper with authentication
 const apiRequest = async (endpoint: string, options: RequestInit = {}) => {
-  const token = getAuthToken();
+  const token = await getAuthToken();
   
   const config: RequestInit = {
     headers: {
@@ -41,20 +43,6 @@ const apiRequest = async (endpoint: string, options: RequestInit = {}) => {
 
 // Authentication API
 export const authAPI = {
-  login: async (email: string, password: string) => {
-    return apiRequest('/auth/login', {
-      method: 'POST',
-      body: JSON.stringify({ email, password }),
-    });
-  },
-
-  register: async (username: string, email: string, password: string) => {
-    return apiRequest('/auth/register', {
-      method: 'POST',
-      body: JSON.stringify({ username, email, password }),
-    });
-  },
-
   getMe: async () => {
     return apiRequest('/auth/me');
   }

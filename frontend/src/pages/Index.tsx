@@ -1,9 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Rocket, Crown, Car, Donut } from "lucide-react";
+import { Rocket, Donut } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { isPro } from "@/lib/pro";
+import AuthButton from "@/components/AuthButton";
 
 const Index = () => {
   const [userIsPro, setUserIsPro] = useState(false);
@@ -37,18 +38,8 @@ const Index = () => {
                 <Donut className="h-4 w-4 mr-1" />
                 Donate
               </Badge>
-            ) : (
-              <Button 
-                variant="ghost" 
-                className="text-white hover:text-orange-400 hover:bg-gray-800"
-                asChild
-              >
-                <Link to="/register">
-                  <Donut className="h-4 w-4 mr-1" />
-                  Donate
-                </Link>
-              </Button>
-            )}
+            ) : null}
+            <AuthButton className="text-white hover:text-orange-400 hover:bg-gray-800" />
             {/* <div className="w-8 h-8 rounded-full bg-gray-600"></div> */}
           </div>
         </div>

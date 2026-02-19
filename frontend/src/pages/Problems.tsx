@@ -3,9 +3,11 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
-import { CheckCircle, Circle, Star, Search, Grid3X3, Shuffle, Trash2, HelpCircle, ArrowLeft, Rocket } from "lucide-react";
+import { CheckCircle, Circle, Star, Search, Grid3X3, Shuffle, Trash2, HelpCircle, Rocket } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { problemsAPI, userAPI } from "@/lib/api";
+import AuthButton from "@/components/AuthButton";
+import { onAuthChange } from "@/lib/auth";
 
 interface Category {
   id: string;
@@ -30,6 +32,7 @@ const Problems = () => {
   const [problems, setProblems] = useState<ProblemItem[]>([]);
   const [search, setSearch] = useState("");
   const [solved, setSolved] = useState<Set<string>>(new Set());
+  const [isAuthed, setIsAuthed] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -42,13 +45,21 @@ const Problems = () => {
   }, [selectedCategory]);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (!token) return;
+    return onAuthChange((user) => {
+      setIsAuthed(!!user);
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!isAuthed) {
+      setSolved(new Set());
+      return;
+    }
     userAPI.getSolvedProblems().then((res) => {
       const set = new Set<string>((res.problems || []).map((p: any) => p.slug));
       setSolved(set);
     }).catch(() => {});
-  }, []);
+  }, [isAuthed]);
 
   const handleCategoryClick = (categoryId: string) => {
     setSelectedCategory(prev => (prev === categoryId ? "" : categoryId));
@@ -84,6 +95,7 @@ const Problems = () => {
           </div>
 
           <div className="flex items-center space-x-4">
+            <AuthButton className="text-white hover:bg-gray-800" />
             {/* <div className="w-8 h-8 rounded-full bg-gray-600"></div> */}
           </div>
         </div>

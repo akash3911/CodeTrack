@@ -11,9 +11,10 @@ Create `.env`:
 NODE_ENV=development
 PORT=5000
 MONGODB_URI=<your_mongodb_uri>
-JWT_SECRET=<random_long_string>
-JWT_EXPIRE=7d
 FRONTEND_URL=http://localhost:5173
+# Firebase Admin
+FIREBASE_SERVICE_ACCOUNT_PATH=./auth-f9e85-firebase-adminsdk-fbsvc-b06f1890b0.json
+# Or set FIREBASE_SERVICE_ACCOUNT_JSON to the service account JSON string
 # Judge0 (leave key blank to use public CE)
 JUDGE0_BASE=https://ce.judge0.com
 # If using RapidAPI:
@@ -35,7 +36,18 @@ npm run dev
 ```
 Frontend: http://localhost:5173
 
-Open the app, register, pick a problem, write code, Run (example tests) or Submit (stores result + code in Mongo).
+Create `frontend/.env`:
+```env
+VITE_API_URL=http://localhost:5000/api
+VITE_FIREBASE_API_KEY=<your_firebase_api_key>
+VITE_FIREBASE_AUTH_DOMAIN=<your_firebase_auth_domain>
+VITE_FIREBASE_PROJECT_ID=<your_firebase_project_id>
+VITE_FIREBASE_STORAGE_BUCKET=<your_firebase_storage_bucket>
+VITE_FIREBASE_MESSAGING_SENDER_ID=<your_firebase_sender_id>
+VITE_FIREBASE_APP_ID=<your_firebase_app_id>
+```
+
+Open the app, sign in with Google, pick a problem, write code, Run (example tests) or Submit (stores result + code in Mongo).
 
 ## Judge0 Notes
 - Without JUDGE0_KEY it uses the public CE endpoint (rate limits apply).

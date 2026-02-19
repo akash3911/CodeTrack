@@ -7,12 +7,14 @@ import {
   Settings, 
   Maximize2, 
   RotateCcw, 
-  Rocket,
-  ArrowLeft,
-  ChevronRight
+  Rocket
 } from "lucide-react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { problemsAPI, submissionsAPI } from "@/lib/api";
+import { onAuthChange, signInWithGoogle } from "@/lib/auth";
+import { auth } from "@/lib/firebase";
+import AuthButton from "@/components/AuthButton";
+import Editor from "@monaco-editor/react";
 
 interface ProblemData {
   _id: string;
@@ -51,6 +53,7 @@ const Problem = () => {
   const [activeCase, setActiveCase] = useState<number>(0);
   const [outputTab, setOutputTab] = useState<'results' | 'console'>('results');
   const storageKey = id ? `code:${id}:${language}` : undefined;
+  const [isAuthed, setIsAuthed] = useState(false);
 
   const defaultSnippets: Record<'python' | 'java', string> = {
     python: `def solve():
@@ -110,16 +113,24 @@ public class Main {
   }, [id]);
 
   useEffect(() => {
+    return onAuthChange((user) => {
+      setIsAuthed(!!user);
+    });
+  }, []);
+
+  useEffect(() => {
     // Fetch previous submissions when authenticated
-    const token = localStorage.getItem('token');
-    if (!token || !id) return;
+    if (!isAuthed || !id) {
+      setSubmissions([]);
+      return;
+    }
     (async () => {
       try {
         const data = await submissionsAPI.list(id);
         setSubmissions(data.submissions || []);
       } catch {}
     })();
-  }, [id]);
+  }, [id, isAuthed]);
 
   const difficultyBadgeClass = (d?: string) => {
     switch (d) {
@@ -200,10 +211,12 @@ public class Main {
   };
 
   const onSubmit = async () => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      navigate('/login');
-      return;
+    if (!auth.currentUser) {
+      try {
+        await signInWithGoogle();
+      } catch {
+        return;
+      }
     }
     if (!id) return;
 
@@ -241,6 +254,7 @@ public class Main {
           </div>
           <div className="flex items-center space-x-4">
             <Button variant="ghost" className="text-white hover:bg-gray-800" onClick={() => navigate(-1)}>↩</Button>
+            <AuthButton className="text-white hover:bg-gray-800" />
             {/* <div className="w-8 h-8 rounded-full bg-gray-600"></div> */}
           </div>
         </div>
@@ -360,9 +374,9 @@ public class Main {
         </div>
 
         {/* Right Panel - Code Editor */}
-        <div className="w-1/2 flex flex-col">
-          {/* Editor Header */}
-          <div className="p-4 border-b border-gray-800 flex items-center justify-between">
+        <div className="w-1/2 flex flex-col" style={{ minHeight: 0 }}>
+          {/* Editor Header with Run/Submit Buttons */}
+          <div className="p-4 border-b border-gray-800 flex items-center justify-between bg-gray-900">
             <div className="flex items-center gap-4">
               <Select value={language} onValueChange={(v) => setLanguage(v as any)}>
                 <SelectTrigger className="w-32 bg-gray-800 border-gray-700 text-white">
@@ -384,31 +398,40 @@ public class Main {
               <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white hover:bg-gray-800">
                 <Maximize2 className="h-4 w-4" />
               </Button>
+              <Button size="sm" variant="outline" className="bg-gray-800 border-gray-700 text-white hover:bg-gray-700" onClick={onRun} disabled={running}>
+                {running ? 'Running…' : 'Run'}
+              </Button>
+              <Button size="sm" className="bg-green-600 hover:bg-green-700 text-white" onClick={onSubmit}>
+                Submit
+              </Button>
             </div>
           </div>
 
           {/* Code Editor */}
-          <div className="flex-1 bg-[#0d1117] p-4 font-mono text-sm overflow-y-auto">
-            <textarea value={code} onChange={(e) => setCode(e.target.value)} className="w-full h-full bg-transparent outline-none text-gray-100 font-mono" />
+          <div className="flex-1 bg-[#0d1117] overflow-hidden" style={{ minHeight: 0 }}>
+            <Editor
+              height="100%"
+              theme="vs-dark"
+              language={language}
+              value={code}
+              onChange={(value) => setCode(value || "")}
+              options={{
+                minimap: { enabled: false },
+                fontSize: 14,
+                wordWrap: "on",
+                automaticLayout: true
+              }}
+            />
           </div>
 
-          {/* Console / Results Panel */}
-          <div className="border-t border-gray-800">
-            <div className="p-4 bg-gray-900 space-y-3">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <div className="flex gap-2 bg-gray-800 rounded p-1">
-                    <button onClick={() => setOutputTab('results')} className={`text-xs px-3 py-1 rounded ${outputTab==='results' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white'}`}>Results</button>
-                    <button onClick={() => setOutputTab('console')} className={`text-xs px-3 py-1 rounded ${outputTab==='console' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white'}`}>Console</button>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Button size="sm" variant="outline" className="bg-gray-800 border-gray-700 text-white hover:bg-gray-700" onClick={onRun} disabled={running}>
-                    {running ? 'Running…' : 'Run'}
-                  </Button>
-                  <Button size="sm" className="bg-green-600 hover:bg-green-700 text-white" onClick={onSubmit}>
-                    Submit
-                  </Button>
+          {/* Output Panel - Only show if there's output */}
+          {(testResults.length > 0 || runOutput) && (
+          <div className="border-t border-gray-800 bg-gray-900 max-h-[40vh] overflow-y-auto">
+            <div className="p-4 space-y-3">
+              <div className="flex items-center gap-4">
+                <div className="flex gap-2 bg-gray-800 rounded p-1">
+                  <button onClick={() => setOutputTab('results')} className={`text-xs px-3 py-1 rounded ${outputTab==='results' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white'}`}>Results</button>
+                  <button onClick={() => setOutputTab('console')} className={`text-xs px-3 py-1 rounded ${outputTab==='console' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white'}`}>Console</button>
                 </div>
               </div>
               {outputTab === 'results' && (
@@ -484,6 +507,7 @@ public class Main {
               )}
             </div>
           </div>
+          )}
         </div>
       </div>
     </div>

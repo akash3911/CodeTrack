@@ -5,10 +5,3 @@ import { IUser } from '../models/User';
 export interface AuthenticatedRequest extends Request {
   user?: IUser;
 }
-
-// JWT Payload interface
-export interface JWTPayload {
-  userId: string;
-  iat?: number;
-  exp?: number;
-}
