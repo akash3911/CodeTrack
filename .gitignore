@@ -46,6 +46,9 @@ coverage
 backend/.env
 frontend/.env
 
+# Firebase Admin SDK credentials
+*firebase-adminsdk*.json
+
 # Local data/uploads (add if you generate these)
 uploads
 tmp

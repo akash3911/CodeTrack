@@ -2,56 +2,56 @@
 @tailwind components;
 @tailwind utilities;
 
-/* LeetCode-style Design System - Dark coding platform theme */
+/* CodeTrack - Light & Fun Design System */
 
 @layer base {
   :root {
-    --background: 240 10% 3.9%;
-    --foreground: 0 0% 98%;
+    --background: 0 0% 98%;
+    --foreground: 280 13% 20%;
 
-    --card: 240 10% 6%;
-    --card-foreground: 0 0% 98%;
+    --card: 0 0% 100%;
+    --card-foreground: 280 13% 20%;
 
-    --popover: 240 10% 6%;
-    --popover-foreground: 0 0% 98%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 280 13% 20%;
 
-    --primary: 173 80% 40%;
-    --primary-foreground: 0 0% 98%;
+    --primary: 25 95% 53%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 240 6% 10%;
-    --secondary-foreground: 0 0% 98%;
+    --secondary: 260 80% 56%;
+    --secondary-foreground: 0 0% 100%;
 
-    --muted: 240 6% 10%;
-    --muted-foreground: 240 5% 64.9%;
+    --muted: 220 14% 96%;
+    --muted-foreground: 220 8% 46%;
 
-    --accent: 173 80% 40%;
-    --accent-foreground: 0 0% 98%;
+    --accent: 25 95% 53%;
+    --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 98%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 240 6% 12%;
-    --input: 240 6% 12%;
-    --ring: 173 80% 40%;
+    --border: 220 14% 90%;
+    --input: 220 14% 96%;
+    --ring: 25 95% 53%;
 
-    /* LeetCode Custom Design Tokens */
-    --hero-gradient: linear-gradient(135deg, hsl(173 80% 40% / 0.2), hsl(240 10% 6% / 0.8));
-    --code-bg: 240 10% 4%;
-    --success: 173 80% 40%;
-    --warning: 45 93% 58%;
-    --info: 217 91% 60%;
-    --easy: 173 80% 40%;
-    --medium: 45 93% 58%;
+    /* CodeTrack Custom Design Tokens */
+    --hero-gradient: linear-gradient(135deg, hsl(25 95% 53% / 0.15), hsl(260 80% 56% / 0.15));
+    --code-bg: 220 14% 96%;
+    --success: 120 73% 45%;
+    --warning: 38 92% 50%;
+    --info: 219 91% 60%;
+    --easy: 120 73% 45%;
+    --medium: 38 92% 50%;
     --hard: 0 84% 60%;
     
     /* Shadows */
-    --shadow-glow: 0 0 40px hsl(173 80% 40% / 0.2);
-    --shadow-card: 0 4px 20px hsl(240 10% 2% / 0.8);
+    --shadow-glow: 0 0 40px hsl(25 95% 53% / 0.15);
+    --shadow-card: 0 4px 20px hsl(220 14% 20% / 0.08);
     
     /* Animations */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
-    --radius: 0.375rem;
+    --radius: 0.5rem;
 
     --sidebar-background: 0 0% 98%;
 

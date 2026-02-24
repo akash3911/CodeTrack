@@ -36,7 +36,7 @@ const AuthButton = ({ className, variant = "ghost" }: AuthButtonProps) => {
 
   return user ? (
     <Button variant={variant} className={className} onClick={handleSignOut} disabled={busy}>
-      Sign out
+      {user.displayName || 'Sign out'}
     </Button>
   ) : (
     <Button variant={variant} className={className} onClick={handleSignIn} disabled={busy}>

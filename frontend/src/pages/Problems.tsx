@@ -77,16 +77,16 @@ const Problems = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white">
+    <div className="min-h-screen bg-gradient-to-br from-white via-blue-50 to-orange-50 text-gray-900">
       {/* Header */}
-      <header className="border-b border-gray-800 bg-[#0a0a0a] sticky top-0 z-50">
+      <header className="border-b border-blue-100 bg-white/80 backdrop-blur-sm sticky top-0 z-50 shadow-sm">
         <div className="container flex h-16 items-center justify-between px-6 max-w-7xl mx-auto">
           <div className="flex items-center space-x-8">
             <Link to="/" className="flex items-center space-x-2">
-              <div className="p-1 rounded bg-orange-500">
+              <div className="p-2 rounded-lg bg-gradient-to-br from-orange-400 to-orange-600 shadow-md">
                 <Rocket className="h-5 w-5 text-white" />
               </div>
-              <span className="text-xl font-bold text-white">
+              <span className="text-xl font-bold bg-gradient-to-r from-orange-500 to-blue-600 bg-clip-text text-transparent">
                 CodeTrack
               </span>
             </Link>
@@ -95,7 +95,7 @@ const Problems = () => {
           </div>
 
           <div className="flex items-center space-x-4">
-            <AuthButton className="text-white hover:bg-gray-800" />
+            <AuthButton className="text-gray-700 hover:text-orange-600 hover:bg-orange-50 font-medium" />
             {/* <div className="w-8 h-8 rounded-full bg-gray-600"></div> */}
           </div>
         </div>
@@ -105,9 +105,9 @@ const Problems = () => {
       <div className="flex">
 
         {/* Main Content */}
-        <div className="flex-1 bg-[#0a0a0a]">
+        <div className="flex-1 bg-transparent">
           {/* Search and Controls */}
-          <div className="px-6 py-4 border-b border-gray-800">
+          <div className="px-6 py-4 border-b border-blue-100">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <div className="relative">
@@ -116,21 +116,21 @@ const Problems = () => {
                     placeholder="Search" 
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
-                    className="pl-10 w-64 bg-gray-800 border-gray-700 text-white placeholder-gray-400"
+                    className="pl-10 w-64 bg-white border-blue-200 text-gray-900 placeholder-gray-400"
                   />
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <Button variant="ghost" size="sm" className="text-white hover:bg-gray-800">
-                  <Grid3X3 className="h-4 w-4" />
-                </Button>
-                <Button variant="ghost" size="sm" className="text-white hover:bg-gray-800">
-                  <Shuffle className="h-4 w-4" />
-                </Button>
-                <Button variant="ghost" size="sm" className="bg-red-900/30 text-red-400 hover:bg-red-900/50">
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-                <Button variant="ghost" size="sm" className="text-white hover:bg-gray-800">
+              <Button variant="ghost" size="sm" className="text-gray-600 hover:bg-blue-100 hover:text-gray-900">
+                <Grid3X3 className="h-4 w-4" />
+              </Button>
+              <Button variant="ghost" size="sm" className="text-gray-600 hover:bg-blue-100 hover:text-gray-900">
+                <Shuffle className="h-4 w-4" />
+              </Button>
+              <Button variant="ghost" size="sm" className="text-red-500 hover:bg-red-50 hover:text-red-700">
+                <Trash2 className="h-4 w-4" />
+              </Button>
+              <Button variant="ghost" size="sm" className="text-gray-600 hover:bg-blue-100 hover:text-gray-900">
                   <HelpCircle className="h-4 w-4" />
                 </Button>
               </div>
@@ -142,27 +142,27 @@ const Problems = () => {
             {categories.map((category) => (
               <div 
                 key={category.id} 
-                className="p-4 bg-gray-900 hover:bg-gray-800 transition-colors cursor-pointer rounded-lg border border-gray-700"
+                className="p-4 bg-white hover:shadow-md transition-all cursor-pointer rounded-lg border border-blue-100 shadow-sm"
                 onClick={() => handleCategoryClick(category.id)}
               >
                 <div className="flex items-center justify-between">
                   <div className="flex-1">
                     <div className="flex items-center gap-4 mb-2">
-                      <h3 className="font-semibold text-white flex items-center gap-2">
+                      <h3 className="font-semibold text-gray-900 flex items-center gap-2">
                         {category.name}
                       </h3>
-                      <span className="text-sm text-gray-400">({category.solved} / {category.total})</span>
+                      <span className="text-sm text-gray-500">({category.solved} / {category.total})</span>
                       {selectedCategory === category.id && (
-                        <Badge className="bg-orange-500 text-white text-xs px-2 py-1">Active</Badge>
+                        <Badge className="bg-gradient-to-r from-orange-500 to-orange-600 text-white text-xs px-2 py-1">Active</Badge>
                       )}
                     </div>
-                    <Progress value={(category.total ? (category.solved / category.total) * 100 : 0)} className="h-2 bg-gray-700" />
+                    <Progress value={(category.total ? (category.solved / category.total) * 100 : 0)} className="h-2 bg-blue-200" />
                   </div>
                 </div>
 
                 {selectedCategory === category.id && (
-                  <div className="mt-4 border-t border-gray-700 pt-4">
-                    <div className="grid grid-cols-12 gap-4 text-sm font-medium text-gray-400 mb-4 pb-2">
+                  <div className="mt-4 border-t border-blue-100 pt-4">
+                    <div className="grid grid-cols-12 gap-4 text-sm font-medium text-gray-500 mb-4 pb-2">
                       <div className="col-span-1">Status</div>
                       <div className="col-span-1">Star</div>
                       <div className="col-span-6">Problem</div>
@@ -178,7 +178,7 @@ const Problems = () => {
                         return (
                           <div
                             key={problem._id}
-                            className="grid grid-cols-12 gap-4 py-3 hover:bg-gray-800/50 rounded transition-all duration-200 cursor-pointer items-center group"
+                          className="grid grid-cols-12 gap-4 py-3 hover:bg-blue-50 rounded transition-all duration-200 cursor-pointer items-center group"
                             onClick={(e) => {
                               e.stopPropagation();
                               go();
@@ -188,15 +188,15 @@ const Problems = () => {
                               {isSolved ? (
                                 <CheckCircle className="h-5 w-5 text-green-500" />
                               ) : (
-                                <Circle className="h-5 w-5 text-gray-600 group-hover:text-gray-500" />
+                                <Circle className="h-5 w-5 text-gray-300 group-hover:text-blue-400" />
                               )}
                             </div>
                             <div className="col-span-1">
-                              <Star className="h-4 w-4 transition-colors text-gray-600 group-hover:text-gray-500" />
+                              <Star className="h-4 w-4 transition-colors text-gray-300 group-hover:text-yellow-400" />
                             </div>
                             <div className="col-span-6">
                               <div className="flex items-center gap-2">
-                                <span className="font-medium transition-colors text-white group-hover:text-blue-400">
+                                <span className="font-medium transition-colors text-gray-900 group-hover:text-orange-500">
                                   {problem.title}
                                 </span>
                               </div>
@@ -210,7 +210,7 @@ const Problems = () => {
                               <Button 
                                 size="sm"
                                 variant="ghost"
-                                className="text-blue-400 hover:text-blue-300 text-xs px-2 py-1"
+                                className="text-orange-500 hover:text-orange-700 text-xs px-2 py-1 font-semibold"
                                 onClick={(e) => {
                                   e.preventDefault();
                                   e.stopPropagation();
@@ -225,7 +225,7 @@ const Problems = () => {
                       })}
 
                       {filteredProblems.length === 0 && (
-                        <div className="text-sm text-gray-400">No problems in this folder.</div>
+                        <div className="text-sm text-gray-500">No problems in this folder.</div>
                       )}
                     </div>
                   </div>

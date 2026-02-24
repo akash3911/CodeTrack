@@ -60,9 +60,6 @@ const userSchema = new Schema<IUser>({
   timestamps: true
 });
 
-// Index for better performance
-userSchema.index({ email: 1 });
-userSchema.index({ username: 1 });
-userSchema.index({ firebaseUid: 1 });
+// Indexes are defined via schema fields (unique: true).
 
 export default mongoose.model<IUser>('User', userSchema);
