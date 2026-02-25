@@ -71,3 +71,7 @@ Thumbs.db
 
 # Misc
 *.local
+*.pem
+*.md
+*.txt
+*.sh
