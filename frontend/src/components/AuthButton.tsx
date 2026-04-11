@@ -20,6 +20,8 @@ const AuthButton = ({ className, variant = "ghost" }: AuthButtonProps) => {
     setBusy(true);
     try {
       await signInWithGoogle();
+    } catch (err) {
+      console.warn(err);
     } finally {
       setBusy(false);
     }
@@ -29,6 +31,8 @@ const AuthButton = ({ className, variant = "ghost" }: AuthButtonProps) => {
     setBusy(true);
     try {
       await signOutUser();
+    } catch (err) {
+      console.warn(err);
     } finally {
       setBusy(false);
     }

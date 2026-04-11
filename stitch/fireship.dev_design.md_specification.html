@@ -1,0 +1,50 @@
+# Design System Document: Kinetic High-Density Editorial (Fireship.dev Exact)
+
+## 1. Overview & Creative North Star: "The Kinetic Coder"
+This design system is built for the high-velocity world of modern development. The Creative North Star is **The Kinetic Coder**, inspired directly by fireship.dev. It focuses on delivering information with high production value, extreme contrast, and a sense of "digital momentum."
+
+## 2. Visual Principles
+*   **High-Octane Contrast:** Deep, absolute grays contrasted with vibrant, glowing accents.
+*   **Chunky & Tight Typography:** Heavy font weights with negative letter spacing for a punchy, editorial feel.
+*   **Structured Information Density:** Content is organized into clear, elevated modules with subtle borders.
+*   **Minimalist Sharpness:** 8px corner radii provide a balance between professional precision and modern friendliness.
+
+## 3. Core Design Tokens
+
+### Color Palette
+*   **Surface (Background):** `#131313` (The base "void")
+*   **Surface Container (Cards):** `#1B1B1B` (For elevation and module separation)
+*   **Primary Accent (Gold):** `#FFC02E` (Used for brand, primary CTAs, and key highlights)
+*   **Secondary Accent (Pulse):** `#FF006E` (Used for badges, "New" indicators, and quick tips)
+*   **Text (Primary):** `#FFFFFF` (Maximum contrast)
+*   **Text (Secondary):** `#A0A0A0` (Muted labels and metadata)
+*   **Success:** `#22C55E`
+*   **Error:** `#EF4444`
+
+### Typography
+*   **Headings:** `Space Grotesk`, Weight 700-900. Tracking: `-0.02em` to `-0.05em`.
+*   **Body/Labels:** `Inter`, Weight 400-600.
+*   **Monospace:** `JetBrains Mono` or `Fira Code`.
+
+### Shapes & Elevation
+*   **Corner Radius:** `8px` for all interactive elements and containers.
+*   **Borders:** `1px solid rgba(255, 255, 255, 0.1)` for card outlines.
+*   **Shadows:** Heavy, low-spread shadows to suggest depth on cards (`shadow-[0_20px_40px_rgba(0,0,0,0.5)]`).
+
+## 4. Layout & Components
+
+### Navigation (The Mission Control)
+*   Sticky header with `backdrop-blur-md` and `bg-[#131313]/80`.
+*   Links in `Space Grotesk`, with an active state showing the Primary Gold color.
+
+### Course/Content Cards
+*   Background: `#1B1B1B`.
+*   Image thumbnails with high-saturation graphics.
+*   Metadata (Time, Type) in small, bold caps using `Inter`.
+
+### Primary CTA (The "Fire" Button)
+*   Background: `#FFC02E`. Text: `#000000` (Extra Bold).
+*   Hover: Slight scale-up and brighter glow.
+
+## 5. Copilot Implementation Prompt
+"Implement a UI based on the Fireship.dev design system. Use a background of #131313. All cards should be #1B1B1B with an 8px border-radius and a subtle 1px white border at 10% opacity. Use #FFC02E as the primary gold accent for branding and buttons. Use #FF006E for secondary badges. Typography must be Space Grotesk for all headings (bold, tight tracking) and Inter for body text. Ensure high information density with a clear grid layout."

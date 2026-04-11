@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
-import { CheckCircle, Circle, Star, Search, Grid3X3, Shuffle, Trash2, HelpCircle, Rocket } from "lucide-react";
+import { CheckCircle, Circle, Search, Grid3X3, Shuffle, Trash2, HelpCircle, Sparkles } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { problemsAPI, userAPI } from "@/lib/api";
 import AuthButton from "@/components/AuthButton";
@@ -36,12 +36,16 @@ const Problems = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    problemsAPI.getCategories().then((res) => setCategories(res.categories));
+    problemsAPI.getCategories()
+      .then((res) => setCategories(res.categories || []))
+      .catch(() => setCategories([]));
   }, []);
 
   useEffect(() => {
     if (!selectedCategory) return setProblems([]);
-    problemsAPI.getProblemsByCategory(selectedCategory).then((res) => setProblems(res.problems || []));
+    problemsAPI.getProblemsByCategory(selectedCategory)
+      .then((res) => setProblems(res.problems || []))
+      .catch(() => setProblems([]));
   }, [selectedCategory]);
 
   useEffect(() => {
@@ -69,171 +73,150 @@ const Problems = () => {
 
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
-      case "Easy": return "text-green-400";
-      case "Medium": return "text-yellow-400";
-      case "Hard": return "text-red-400";
-      default: return "text-gray-400";
+      case "Easy": return "text-[#22c55e]";
+      case "Medium": return "text-[#ffc02e]";
+      case "Hard": return "text-[#ef4444]";
+      default: return "text-white/60";
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-white via-blue-50 to-orange-50 text-gray-900">
-      {/* Header */}
-      <header className="border-b border-blue-100 bg-white/80 backdrop-blur-sm sticky top-0 z-50 shadow-sm">
-        <div className="container flex h-16 items-center justify-between px-6 max-w-7xl mx-auto">
-          <div className="flex items-center space-x-8">
-            <Link to="/" className="flex items-center space-x-2">
-              <div className="p-2 rounded-lg bg-gradient-to-br from-orange-400 to-orange-600 shadow-md">
-                <Rocket className="h-5 w-5 text-white" />
-              </div>
-              <span className="text-xl font-bold bg-gradient-to-r from-orange-500 to-blue-600 bg-clip-text text-transparent">
+    <div className="min-h-screen bg-[#131313] text-white">
+      <div className="grid-noise min-h-screen">
+        <header className="sticky top-0 z-50 border-b border-white/10 bg-[#131313]/80 backdrop-blur-md">
+          <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-6">
+            <Link to="/" className="flex items-center gap-2">
+              <Sparkles className="h-5 w-5 text-[#ffc02e]" />
+              <span className="font-heading text-xl font-extrabold tracking-[-0.04em] text-[#ffc02e]">
                 CodeTrack
               </span>
             </Link>
-            
- 
+
+            <div className="flex items-center space-x-4">
+              <AuthButton className="rounded-md border border-white/10 bg-[#1b1b1b] font-semibold text-white hover:border-[#ffc02e]/40 hover:bg-[#232323] hover:text-[#ffc02e]" />
+            </div>
           </div>
+        </header>
 
-          <div className="flex items-center space-x-4">
-            <AuthButton className="text-gray-700 hover:text-orange-600 hover:bg-orange-50 font-medium" />
-            {/* <div className="w-8 h-8 rounded-full bg-gray-600"></div> */}
-          </div>
-        </div>
-      </header>
-
-      {/* Left Sidebar */}
-      <div className="flex">
-
-        {/* Main Content */}
-        <div className="flex-1 bg-transparent">
-          {/* Search and Controls */}
-          <div className="px-6 py-4 border-b border-blue-100">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                  <Input 
-                    placeholder="Search" 
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    className="pl-10 w-64 bg-white border-blue-200 text-gray-900 placeholder-gray-400"
-                  />
-                </div>
+        <div className="mx-auto w-full max-w-7xl px-6 py-8">
+          <div className="ui-surface animate-rise">
+            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 px-5 py-4">
+              <div className="flex items-center gap-3">
+                <p className="font-heading text-xs font-bold uppercase tracking-[0.14em] text-[#ff006e]">Practice Mission Control</p>
+                <Badge className="rounded-md border border-white/10 bg-white/5 px-2 py-1 text-[10px] uppercase tracking-[0.1em] text-white/60">
+                  {categories.length} Tracks
+                </Badge>
+              </div>
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-white/40" />
+                <Input
+                  placeholder="Search problem title"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  className="h-9 w-64 border-white/15 bg-[#141414] pl-10 text-white placeholder:text-white/35"
+                />
               </div>
               <div className="flex items-center gap-2">
-              <Button variant="ghost" size="sm" className="text-gray-600 hover:bg-blue-100 hover:text-gray-900">
-                <Grid3X3 className="h-4 w-4" />
-              </Button>
-              <Button variant="ghost" size="sm" className="text-gray-600 hover:bg-blue-100 hover:text-gray-900">
-                <Shuffle className="h-4 w-4" />
-              </Button>
-              <Button variant="ghost" size="sm" className="text-red-500 hover:bg-red-50 hover:text-red-700">
-                <Trash2 className="h-4 w-4" />
-              </Button>
-              <Button variant="ghost" size="sm" className="text-gray-600 hover:bg-blue-100 hover:text-gray-900">
+                <Button variant="ghost" size="sm" className="text-white/70 hover:bg-white/10 hover:text-white">
+                  <Grid3X3 className="h-4 w-4" />
+                </Button>
+                <Button variant="ghost" size="sm" className="text-white/70 hover:bg-white/10 hover:text-white">
+                  <Shuffle className="h-4 w-4" />
+                </Button>
+                <Button variant="ghost" size="sm" className="text-white/70 hover:bg-white/10 hover:text-white">
                   <HelpCircle className="h-4 w-4" />
+                </Button>
+                <Button variant="ghost" size="sm" className="text-[#ef4444] hover:bg-[#ef4444]/10 hover:text-[#ef4444]">
+                  <Trash2 className="h-4 w-4" />
                 </Button>
               </div>
             </div>
-          </div>
 
-          {/* Categories */}
-          <div className="p-6 space-y-4">
-            {categories.map((category) => (
-              <div 
-                key={category.id} 
-                className="p-4 bg-white hover:shadow-md transition-all cursor-pointer rounded-lg border border-blue-100 shadow-sm"
-                onClick={() => handleCategoryClick(category.id)}
-              >
-                <div className="flex items-center justify-between">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-4 mb-2">
-                      <h3 className="font-semibold text-gray-900 flex items-center gap-2">
-                        {category.name}
-                      </h3>
-                      <span className="text-sm text-gray-500">({category.solved} / {category.total})</span>
-                      {selectedCategory === category.id && (
-                        <Badge className="bg-gradient-to-r from-orange-500 to-orange-600 text-white text-xs px-2 py-1">Active</Badge>
-                      )}
+            <div className="space-y-4 p-5">
+              {categories.map((category) => (
+                <div
+                  key={category.id}
+                  className="rounded-lg border border-white/10 bg-[#191919] p-4 shadow-[0_20px_40px_rgba(0,0,0,0.4)] transition hover:border-white/20"
+                  onClick={() => handleCategoryClick(category.id)}
+                >
+                  <div className="flex items-center justify-between gap-4">
+                    <div>
+                      <h3 className="font-heading text-xl font-extrabold tracking-[-0.03em] text-white">{category.name}</h3>
+                      <p className="mt-1 text-sm text-white/55">
+                        {category.solved} solved / {category.total} total
+                      </p>
                     </div>
-                    <Progress value={(category.total ? (category.solved / category.total) * 100 : 0)} className="h-2 bg-blue-200" />
+                    {selectedCategory === category.id && (
+                      <Badge className="rounded-md border border-[#ffc02e]/35 bg-[#ffc02e]/15 px-2 py-1 text-xs font-bold uppercase tracking-wide text-[#ffc02e]">Active</Badge>
+                    )}
                   </div>
-                </div>
 
-                {selectedCategory === category.id && (
-                  <div className="mt-4 border-t border-blue-100 pt-4">
-                    <div className="grid grid-cols-12 gap-4 text-sm font-medium text-gray-500 mb-4 pb-2">
-                      <div className="col-span-1">Status</div>
-                      <div className="col-span-1">Star</div>
-                      <div className="col-span-6">Problem</div>
-                      <div className="col-span-2">Difficulty</div>
-                      <div className="col-span-2">Action</div>
-                    </div>
+                  <div className="mt-3">
+                    <Progress value={category.total ? (category.solved / category.total) * 100 : 0} className="h-2 bg-black/40" />
+                  </div>
 
-                    <div className="space-y-2">
-                      {filteredProblems.map((problem) => {
-                        const slug = problem.slug || problem._id;
-                        const isSolved = solved.has(slug);
-                        const go = () => navigate(`/problem/${slug}`);
-                        return (
-                          <div
-                            key={problem._id}
-                          className="grid grid-cols-12 gap-4 py-3 hover:bg-blue-50 rounded transition-all duration-200 cursor-pointer items-center group"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              go();
-                            }}
-                          >
-                            <div className="col-span-1">
-                              {isSolved ? (
-                                <CheckCircle className="h-5 w-5 text-green-500" />
-                              ) : (
-                                <Circle className="h-5 w-5 text-gray-300 group-hover:text-blue-400" />
-                              )}
-                            </div>
-                            <div className="col-span-1">
-                              <Star className="h-4 w-4 transition-colors text-gray-300 group-hover:text-yellow-400" />
-                            </div>
-                            <div className="col-span-6">
-                              <div className="flex items-center gap-2">
-                                <span className="font-medium transition-colors text-gray-900 group-hover:text-orange-500">
-                                  {problem.title}
-                                </span>
+                  {selectedCategory === category.id && (
+                    <div className="mt-4 border-t border-white/10 pt-4">
+                      <div className="mb-3 hidden grid-cols-12 gap-3 text-[11px] font-bold uppercase tracking-wide text-white/50 md:grid">
+                        <div className="col-span-1">Status</div>
+                        <div className="col-span-7">Problem</div>
+                        <div className="col-span-2">Difficulty</div>
+                        <div className="col-span-2">Action</div>
+                      </div>
+
+                      <div className="space-y-2">
+                        {filteredProblems.map((problem) => {
+                          const slug = problem.slug || problem._id;
+                          const isSolved = solved.has(slug);
+                          const go = () => navigate(`/problem/${slug}`);
+                          return (
+                            <div
+                              key={problem._id}
+                              className="grid cursor-pointer grid-cols-1 items-center gap-3 rounded-md border border-transparent bg-[#151515] px-3 py-3 transition hover:border-white/10 hover:bg-[#1d1d1d] md:grid-cols-12"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                go();
+                              }}
+                            >
+                              <div className="md:col-span-1">
+                                {isSolved ? (
+                                  <CheckCircle className="h-5 w-5 text-[#22c55e]" />
+                                ) : (
+                                  <Circle className="h-5 w-5 text-white/30" />
+                                )}
+                              </div>
+                              <div className="font-medium text-white md:col-span-7">{problem.title}</div>
+                              <div className={`text-sm font-semibold ${getDifficultyColor(problem.difficulty)} md:col-span-2`}>
+                                {problem.difficulty}
+                              </div>
+                              <div className="md:col-span-2">
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  className="h-8 rounded-md border border-[#ffc02e]/30 bg-[#ffc02e]/10 px-3 text-xs font-bold uppercase tracking-wide text-[#ffc02e] hover:bg-[#ffc02e]/20"
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    go();
+                                  }}
+                                >
+                                  Open
+                                </Button>
                               </div>
                             </div>
-                            <div className="col-span-2">
-                              <span className={`text-sm font-medium ${getDifficultyColor(problem.difficulty)}`}>
-                                {problem.difficulty}
-                              </span>
-                            </div>
-                            <div className="col-span-2 flex items-center gap-2">
-                              <Button 
-                                size="sm"
-                                variant="ghost"
-                                className="text-orange-500 hover:text-orange-700 text-xs px-2 py-1 font-semibold"
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  e.stopPropagation();
-                                  go();
-                                }}
-                              >
-                                Open
-                              </Button>
-                            </div>
-                          </div>
-                        );
-                      })}
+                          );
+                        })}
 
-                      {filteredProblems.length === 0 && (
-                        <div className="text-sm text-gray-500">No problems in this folder.</div>
-                      )}
+                        {filteredProblems.length === 0 && (
+                          <div className="rounded-md border border-white/10 bg-[#121212] p-4 text-sm text-white/55">No problems in this category.</div>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                )}
-              </div>
-            ))}
+                  )}
+                </div>
+              ))}
+            </div>
           </div>
-
         </div>
       </div>
     </div>

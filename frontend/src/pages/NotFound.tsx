@@ -9,11 +9,12 @@ const NotFound = () => {
   }, [location.pathname]);
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">404</h1>
-        <p className="mb-4 text-xl text-gray-600">Oops! Page not found</p>
-        <a href="/" className="text-blue-500 underline hover:text-blue-700">
+    <div className="grid-noise flex min-h-screen items-center justify-center bg-[#131313] px-6 text-white">
+      <div className="ui-surface w-full max-w-lg p-8 text-center">
+        <p className="mb-3 font-heading text-xs font-bold uppercase tracking-[0.14em] text-[#ff006e]">Route Error</p>
+        <h1 className="mb-2 font-heading text-7xl font-black tracking-[-0.05em] text-[#ffc02e]">404</h1>
+        <p className="mb-6 text-base text-white/70">This page does not exist in the current mission map.</p>
+        <a href="/" className="font-heading text-sm font-bold uppercase tracking-wide text-[#ffc02e] underline hover:text-[#ffd979]">
           Return to Home
         </a>
       </div>
