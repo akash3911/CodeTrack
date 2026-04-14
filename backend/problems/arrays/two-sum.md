@@ -3,7 +3,6 @@
   "title": "Two Sum",
   "difficulty": "Easy",
   "order": 2,
-  "isPro": false,
   "tags": ["array", "hashmap"],
   "leetcodeUrl": "https://leetcode.com/problems/two-sum/"
 }

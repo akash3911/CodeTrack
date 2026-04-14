@@ -1,18 +1,14 @@
 import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Button } from "@/components/button";
+import { Badge } from "@/components/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/tabs";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/select";
 import { 
-  Settings, 
-  Maximize2, 
   RotateCcw, 
-  Rocket
 } from "lucide-react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { problemsAPI, submissionsAPI } from "@/lib/api";
-import { onAuthChange, signInWithGoogle } from "@/lib/auth";
-import { auth } from "@/lib/firebase";
+import { onAuthChange } from "@/lib/auth";
 import AuthButton from "@/components/AuthButton";
 import Editor from "@monaco-editor/react";
 
@@ -56,13 +52,7 @@ const Problem = () => {
   const [isAuthed, setIsAuthed] = useState(false);
 
   const defaultSnippets: Record<'python' | 'java', string> = {
-    python: `def solve():
-    # Write your solution. Print the output.
-    print('hello')
-
-if __name__ == '__main__':
-    solve()
-`,
+    python: ``,
     java: `import java.io.*;
 import java.util.*;
 
@@ -211,12 +201,10 @@ public class Main {
   };
 
   const onSubmit = async () => {
-    if (!auth.currentUser) {
-      try {
-        await signInWithGoogle();
-      } catch {
-        return;
-      }
+    if (!isAuthed) {
+      setRunOutput('Please sign in to submit solutions.');
+      setOutputTab('console');
+      return;
     }
     if (!id) return;
 
@@ -266,7 +254,6 @@ public class Main {
           <div className="mx-auto flex h-16 w-full max-w-[1500px] items-center justify-between px-6">
             <div className="flex items-center gap-8">
               <Link to="/" className="flex items-center gap-2">
-                <Rocket className="h-5 w-5 text-[#ffc02e]" />
                 <span className="font-heading text-xl font-extrabold tracking-[-0.04em] text-[#ffc02e]">CodeTrack</span>
               </Link>
               <nav className="hidden items-center gap-8 text-sm md:flex">
@@ -288,7 +275,6 @@ public class Main {
                   <TabsTrigger value="question" className="rounded-md px-3 py-1 text-xs font-bold uppercase tracking-wide text-white/60 data-[state=active]:bg-[#ffc02e] data-[state=active]:text-black">Question</TabsTrigger>
                   <TabsTrigger value="solution" className="rounded-md px-3 py-1 text-xs font-bold uppercase tracking-wide text-white/60 data-[state=active]:bg-[#ffc02e] data-[state=active]:text-black">Solution</TabsTrigger>
                   <TabsTrigger value="submissions" className="rounded-md px-3 py-1 text-xs font-bold uppercase tracking-wide text-white/60 data-[state=active]:bg-[#ffc02e] data-[state=active]:text-black">Submissions</TabsTrigger>
-                  <TabsTrigger value="notes" className="rounded-md px-3 py-1 text-xs font-bold uppercase tracking-wide text-white/60 data-[state=active]:bg-[#ffc02e] data-[state=active]:text-black">Notes</TabsTrigger>
                 </TabsList>
               </div>
 
@@ -382,9 +368,6 @@ public class Main {
                   </div>
                 </TabsContent>
 
-                <TabsContent value="notes" className="m-0 p-6">
-                  <div className="rounded-lg border border-white/10 bg-[#171717] p-4 text-sm text-white/60">Add your notes here.</div>
-                </TabsContent>
               </div>
             </Tabs>
           </div>
@@ -403,15 +386,14 @@ public class Main {
                 </Select>
               </div>
               <div className="flex items-center gap-2">
-                <Button variant="ghost" size="sm" className="text-white/70 hover:bg-white/10 hover:text-white">
+                {/* <Button variant="ghost" size="sm" className="text-white/70 hover:bg-white/10 hover:text-white">
                   <Settings className="h-4 w-4" />
-                </Button>
+                </Button> */}
                 <Button variant="ghost" size="sm" className="text-white/70 hover:bg-white/10 hover:text-white" onClick={() => setCode(defaultSnippets[language])}>
                   <RotateCcw className="h-4 w-4" />
                 </Button>
-                <Button variant="ghost" size="sm" className="text-white/70 hover:bg-white/10 hover:text-white">
-                  <Maximize2 className="h-4 w-4" />
-                </Button>
+                {/* <Button v-
+                 */}
                 <Button size="sm" variant="outline" className="border-white/20 bg-[#1b1b1b] text-white hover:bg-[#232323]" onClick={onRun} disabled={running}>
                   {running ? 'Running...' : "Run"}
                 </Button>

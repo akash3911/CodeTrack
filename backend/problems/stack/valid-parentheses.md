@@ -3,7 +3,6 @@
   "title": "Valid Parentheses",
   "difficulty": "Easy",
   "order": 1,
-  "isPro": true,
   "tags": ["stack", "string"],
   "leetcodeUrl": "https://leetcode.com/problems/valid-parentheses/"
 }

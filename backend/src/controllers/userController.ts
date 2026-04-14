@@ -1,6 +1,10 @@
 import { Request, Response } from 'express';
-import User from '../models/User';
 import { getProblemBySlug } from '../utils/fsProblems';
+import {
+  addSolvedProblem,
+  removeSolvedProblem,
+  toggleStarredProblem,
+} from '../data/users';
 
 // Get user profile
 export const getUserProfile = async (req: Request, res: Response): Promise<Response> => {
@@ -55,11 +59,7 @@ export const markProblemSolved = async (req: Request, res: Response): Promise<Re
       return res.status(404).json({ message: 'Problem not found' });
     }
 
-    await User.findByIdAndUpdate(
-      req.user._id,
-      { $addToSet: { solvedProblems: prob.slug } },
-      { new: true }
-    );
+    await addSolvedProblem(req.user._id, prob.slug);
 
     return res.status(200).json({ message: 'Problem marked as solved' });
 
@@ -78,11 +78,7 @@ export const unmarkProblemSolved = async (req: Request, res: Response): Promise<
 
     const { problemId } = req.params; // slug
 
-    await User.findByIdAndUpdate(
-      req.user._id,
-      { $pull: { solvedProblems: problemId } },
-      { new: true }
-    );
+    await removeSolvedProblem(req.user._id, problemId);
 
     return res.status(200).json({ message: 'Problem unmarked as solved' });
 
@@ -106,25 +102,12 @@ export const toggleProblemStar = async (req: Request, res: Response): Promise<Re
       return res.status(404).json({ message: 'Problem not found' });
     }
 
-    const user = await User.findById(req.user._id);
     const slug = prob.slug;
-    const isStarred = (user!.starredProblems || []).includes(slug);
-
-    if (isStarred) {
-      await User.findByIdAndUpdate(
-        req.user._id,
-        { $pull: { starredProblems: slug } },
-        { new: true }
-      );
-      return res.status(200).json({ message: 'Problem unstarred', isStarred: false });
-    } else {
-      await User.findByIdAndUpdate(
-        req.user._id,
-        { $addToSet: { starredProblems: slug } },
-        { new: true }
-      );
-      return res.status(200).json({ message: 'Problem starred', isStarred: true });
-    }
+    const isStarred = await toggleStarredProblem(req.user._id, slug);
+    return res.status(200).json({
+      message: isStarred ? 'Problem starred' : 'Problem unstarred',
+      isStarred,
+    });
 
   } catch (error) {
     console.error('Toggle problem star error:', error);

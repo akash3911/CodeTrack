@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { Progress } from "@/components/ui/progress";
-import { CheckCircle, Circle, Search, Grid3X3, Shuffle, Trash2, HelpCircle, Sparkles } from "lucide-react";
+import { Button } from "@/components/button";
+import { Badge } from "@/components/badge";
+import { Input } from "@/components/input";
+import { Progress } from "@/components/progress";
+import { CheckCircle, Circle, Search, Grid3X3, Shuffle, Trash2, HelpCircle } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { problemsAPI, userAPI } from "@/lib/api";
 import AuthButton from "@/components/AuthButton";
@@ -21,7 +21,6 @@ interface ProblemItem {
   _id: string;
   title: string;
   difficulty: 'Easy' | 'Medium' | 'Hard';
-  isPro: boolean;
   order: number;
   slug?: string;
 }
@@ -86,7 +85,6 @@ const Problems = () => {
         <header className="sticky top-0 z-50 border-b border-white/10 bg-[#131313]/80 backdrop-blur-md">
           <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-6">
             <Link to="/" className="flex items-center gap-2">
-              <Sparkles className="h-5 w-5 text-[#ffc02e]" />
               <span className="font-heading text-xl font-extrabold tracking-[-0.04em] text-[#ffc02e]">
                 CodeTrack
               </span>
@@ -104,7 +102,7 @@ const Problems = () => {
               <div className="flex items-center gap-3">
                 <p className="font-heading text-xs font-bold uppercase tracking-[0.14em] text-[#ff006e]">Practice Mission Control</p>
                 <Badge className="rounded-md border border-white/10 bg-white/5 px-2 py-1 text-[10px] uppercase tracking-[0.1em] text-white/60">
-                  {categories.length} Tracks
+                  {categories.length} Topics
                 </Badge>
               </div>
               <div className="relative">
@@ -116,20 +114,7 @@ const Problems = () => {
                   className="h-9 w-64 border-white/15 bg-[#141414] pl-10 text-white placeholder:text-white/35"
                 />
               </div>
-              <div className="flex items-center gap-2">
-                <Button variant="ghost" size="sm" className="text-white/70 hover:bg-white/10 hover:text-white">
-                  <Grid3X3 className="h-4 w-4" />
-                </Button>
-                <Button variant="ghost" size="sm" className="text-white/70 hover:bg-white/10 hover:text-white">
-                  <Shuffle className="h-4 w-4" />
-                </Button>
-                <Button variant="ghost" size="sm" className="text-white/70 hover:bg-white/10 hover:text-white">
-                  <HelpCircle className="h-4 w-4" />
-                </Button>
-                <Button variant="ghost" size="sm" className="text-[#ef4444] hover:bg-[#ef4444]/10 hover:text-[#ef4444]">
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              </div>
+              
             </div>
 
             <div className="space-y-4 p-5">
@@ -161,7 +146,7 @@ const Problems = () => {
                         <div className="col-span-1">Status</div>
                         <div className="col-span-7">Problem</div>
                         <div className="col-span-2">Difficulty</div>
-                        <div className="col-span-2">Action</div>
+                        {/* <div className="col-span-2">Action</div> */}
                       </div>
 
                       <div className="space-y-2">
@@ -178,7 +163,7 @@ const Problems = () => {
                                 go();
                               }}
                             >
-                              <div className="md:col-span-1">
+                              <div className="md:col-span">
                                 {isSolved ? (
                                   <CheckCircle className="h-5 w-5 text-[#22c55e]" />
                                 ) : (
@@ -188,20 +173,6 @@ const Problems = () => {
                               <div className="font-medium text-white md:col-span-7">{problem.title}</div>
                               <div className={`text-sm font-semibold ${getDifficultyColor(problem.difficulty)} md:col-span-2`}>
                                 {problem.difficulty}
-                              </div>
-                              <div className="md:col-span-2">
-                                <Button
-                                  size="sm"
-                                  variant="ghost"
-                                  className="h-8 rounded-md border border-[#ffc02e]/30 bg-[#ffc02e]/10 px-3 text-xs font-bold uppercase tracking-wide text-[#ffc02e] hover:bg-[#ffc02e]/20"
-                                  onClick={(e) => {
-                                    e.preventDefault();
-                                    e.stopPropagation();
-                                    go();
-                                  }}
-                                >
-                                  Open
-                                </Button>
                               </div>
                             </div>
                           );

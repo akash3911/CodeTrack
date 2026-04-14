@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { listProblemsByCategory, getProblemBySlug, buildCategoryStats, getAvailableCategoryIds, FSProblem } from '../utils/fsProblems';
+import { listProblemsByCategory, getProblemBySlug, buildCategoryStats, getAvailableCategoryIds, FSProblem, PROBLEMS_ROOT } from '../utils/fsProblems';
 
 // Get all problems for a category
 export const getProblemsByCategory = async (req: Request, res: Response): Promise<Response> => {
@@ -61,7 +61,11 @@ export const getCategories = async (req: Request, res: Response): Promise<Respon
     return res.status(200).json({ categories });
   } catch (error) {
     console.error('Get categories error:', error);
-    return res.status(500).json({ message: 'Internal server error' });
+    return res.status(200).json({
+      categories: [],
+      message: 'Problems are temporarily unavailable',
+      debug: process.env.NODE_ENV === 'development' ? { problemsRoot: PROBLEMS_ROOT } : undefined,
+    });
   }
 };
 

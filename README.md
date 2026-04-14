@@ -10,11 +10,16 @@ Create `.env`:
 ```env
 NODE_ENV=development
 PORT=5000
-MONGODB_URI=<your_mongodb_uri>
 FRONTEND_URL=http://localhost:5173
-# Firebase Admin
-FIREBASE_SERVICE_ACCOUNT_PATH=./auth-f9e85-firebase-adminsdk-fbsvc-b06f1890b0.json
-# Or set FIREBASE_SERVICE_ACCOUNT_JSON to the service account JSON string
+# Local MySQL
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_USER=codetrack
+DB_PASSWORD=codetrack
+DB_NAME=codetrack
+# JWT
+JWT_SECRET=change_this_secret
+JWT_EXPIRES_IN=7d
 # Judge0 (leave key blank to use public CE)
 JUDGE0_BASE=https://ce.judge0.com
 # If using RapidAPI:
@@ -39,15 +44,19 @@ Frontend: http://localhost:5173
 Create `frontend/.env`:
 ```env
 VITE_API_URL=http://localhost:5000/api
-VITE_FIREBASE_API_KEY=<your_firebase_api_key>
-VITE_FIREBASE_AUTH_DOMAIN=<your_firebase_auth_domain>
-VITE_FIREBASE_PROJECT_ID=<your_firebase_project_id>
-VITE_FIREBASE_STORAGE_BUCKET=<your_firebase_storage_bucket>
-VITE_FIREBASE_MESSAGING_SENDER_ID=<your_firebase_sender_id>
-VITE_FIREBASE_APP_ID=<your_firebase_app_id>
 ```
 
-Open the app, sign in with Google, pick a problem, write code, Run (example tests) or Submit (stores result + code in Mongo).
+Open the app, create an account with username/email/password, pick a problem, write code, Run (example tests) or Submit (stores result + code in MySQL).
+
+### Docker Compose
+```bash
+docker compose up --build
+```
+
+This starts:
+- MySQL on port 3306
+- Backend on port 3000
+- Frontend on port 80
 
 ## Judge0 Notes
 - Without JUDGE0_KEY it uses the public CE endpoint (rate limits apply).
@@ -57,9 +66,9 @@ Open the app, sign in with Google, pick a problem, write code, Run (example test
 ## Folder Snapshot
 ```
 backend/src
-  controllers/ (auth, problems, submissions)
+  controllers/ (auth, problems, submissions, user)
+  data/ (mysql, users, submissions)
   middleware/auth.ts
-  models/ (User, Submission)
   utils/fsProblems.ts
 frontend/src
   pages/ (Problems, Problem)

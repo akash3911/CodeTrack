@@ -3,7 +3,6 @@
   "title": "Valid Palindrome",
   "difficulty": "Easy",
   "order": 1,
-  "isPro": false,
   "examples": [
     { "input": "s = 'A man, a plan, a canal: Panama'", "output": "true" },
     { "input": "s = 'race a car'", "output": "false" }

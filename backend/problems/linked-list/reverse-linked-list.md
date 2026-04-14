@@ -3,7 +3,6 @@
   "title": "Reverse Linked List",
   "difficulty": "Easy",
   "order": 1,
-  "isPro": true,
   "tags": ["linked-list"],
   "leetcodeUrl": "https://leetcode.com/problems/reverse-linked-list/"
 }

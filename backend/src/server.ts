@@ -1,6 +1,5 @@
 import 'dotenv/config';
 import express, { Request, Response, NextFunction } from 'express';
-import mongoose from 'mongoose';
 import cors from 'cors';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
@@ -9,6 +8,7 @@ import authRoutes from './routes/auth';
 import problemRoutes from './routes/problems';
 import userRoutes from './routes/user';
 import submissionRoutes from './routes/submissions';
+import { initializeDatabase } from './data/mysql';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -43,11 +43,6 @@ app.use(cors({
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
-// MongoDB connection
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/CodeTrack-clone')
-  .then(() => console.log('✅ Connected to MongoDB'))
-  .catch((error) => console.error('❌ MongoDB connection error:', error));
-
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/problems', problemRoutes);
@@ -77,9 +72,21 @@ app.use((req: Request, res: Response) => {
   res.status(404).json({ message: 'Route not found' });
 });
 
-// Start server
-app.listen(PORT, () => {
-  console.log(`🚀 Server is running on port ${PORT}`);
-  console.log(`📊 Environment: ${process.env.NODE_ENV || 'development'}`);
-  console.log(`🔗 Frontend URL: ${process.env.FRONTEND_URL || 'http://localhost:5173'}`);
-});
+const startServer = async (): Promise<void> => {
+  try {
+    await initializeDatabase();
+    console.log('✅ Connected to MySQL');
+  } catch (error) {
+    console.error('⚠️ MySQL not available, starting in degraded mode.');
+    console.error('⚠️ Auth, profile, and submissions may fail until MySQL is running.');
+    console.error(error);
+  }
+
+  app.listen(PORT, () => {
+    console.log(`🚀 Server is running on port ${PORT}`);
+    console.log(`📊 Environment: ${process.env.NODE_ENV || 'development'}`);
+    console.log(`🔗 Frontend URL: ${process.env.FRONTEND_URL || 'http://localhost:5173'}`);
+  });
+};
+
+void startServer();

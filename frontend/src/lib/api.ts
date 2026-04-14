@@ -1,16 +1,11 @@
-import { getIdToken } from "./auth";
+import { getAuthToken } from "./auth";
 
 // API configuration and utilities
 const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
 
-// Get auth token from Firebase (if signed in)
-const getAuthToken = async (): Promise<string | null> => {
-  return getIdToken();
-};
-
 // API request wrapper with authentication
 const apiRequest = async (endpoint: string, options: RequestInit = {}) => {
-  const token = await getAuthToken();
+  const token = getAuthToken();
   
   const config: RequestInit = {
     headers: {

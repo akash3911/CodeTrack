@@ -3,7 +3,6 @@
   "title": "Binary Search",
   "difficulty": "Easy",
   "order": 1,
-  "isPro": true,
   "tags": ["binary-search", "array"],
   "leetcodeUrl": "https://leetcode.com/problems/binary-search/"
 }

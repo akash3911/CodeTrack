@@ -3,7 +3,6 @@
   "title": "sum of all numebs",
   "difficulty": "Easy",
   "order": 1,
-  "isPro": false,
   "examples": [
     { "input": "[1,2,3,1]", "output": 7 },
     { "input": "[1,2,3,4]", "output": 10 }

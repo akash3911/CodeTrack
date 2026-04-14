@@ -3,7 +3,6 @@
   "title": "Longest Substring Without Repeating Characters",
   "difficulty": "Medium",
   "order": 1,
-  "isPro": true,
   "tags": ["sliding-window", "string"],
   "leetcodeUrl": "https://leetcode.com/problems/longest-substring-without-repeating-characters/"
 }

@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
-import Submission from '../models/Submission';
 import { getProblemBySlug } from '../utils/fsProblems';
-import User from '../models/User';
+import { addSolvedProblem } from '../data/users';
+import { createSubmissionRecord, listSubmissionsByUserAndSlug } from '../data/submissions';
 
 // Ensure fetch exists (Node 18+), otherwise use undici
 // @ts-ignore
@@ -162,7 +162,7 @@ export const createSubmission = async (req: Request, res: Response): Promise<Res
       });
     }
 
-    const submission = await Submission.create({
+    const submission = await createSubmissionRecord({
       userId: req.user._id,
       slug,
       language,
@@ -174,7 +174,7 @@ export const createSubmission = async (req: Request, res: Response): Promise<Res
     });
 
     if (overall === 'Accepted') {
-      try { await User.findByIdAndUpdate(req.user._id, { $addToSet: { solvedProblems: slug } }); } catch {}
+      try { await addSolvedProblem(req.user._id, slug); } catch {}
     }
 
     return res.status(201).json({ submission });
@@ -231,7 +231,7 @@ export const listSubmissions = async (req: Request, res: Response): Promise<Resp
     if (!req.user) return res.status(401).json({ message: 'Not authenticated' });
 
     const { slug } = req.params;
-    const list = await Submission.find({ userId: req.user._id, slug }).sort({ createdAt: -1 }).limit(50);
+    const list = await listSubmissionsByUserAndSlug(req.user._id, slug);
     return res.status(200).json({ submissions: list });
   } catch (err) {
     console.error('List submissions error:', err);

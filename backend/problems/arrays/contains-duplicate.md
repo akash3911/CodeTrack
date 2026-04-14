@@ -3,7 +3,6 @@
   "title": "Contains Duplicate",
   "difficulty": "Easy",
   "order": 1,
-  "isPro": false,
   "examples": [
     { "input": "nums = [1,2,3,1]", "output": "true" },
     { "input": "nums = [1,2,3,4]", "output": "false" }

@@ -10,7 +10,6 @@ export interface FSProblem {
   description: string;
   difficulty: Difficulty;
   category: string; // canonical category id, e.g., 'arrays-hashing'
-  isPro: boolean;
   order: number;
   leetcodeUrl?: string;
   videoUrl?: string;
@@ -21,7 +20,28 @@ export interface FSProblem {
   sourcePath: string;
 }
 
-export const PROBLEMS_ROOT = process.env.PROBLEMS_ROOT || path.resolve(process.cwd(), 'problems');
+const resolveProblemsRoot = (): string => {
+  const candidates = [
+    process.env.PROBLEMS_ROOT,
+    path.resolve(process.cwd(), 'problems'),
+    path.resolve(process.cwd(), 'backend/problems'),
+    path.resolve(__dirname, '../../problems'),
+  ].filter(Boolean) as string[];
+
+  for (const candidate of candidates) {
+    try {
+      if (fs.existsSync(candidate) && fs.statSync(candidate).isDirectory()) {
+        return candidate;
+      }
+    } catch {
+      // Try next candidate.
+    }
+  }
+
+  return path.resolve(process.cwd(), 'problems');
+};
+
+export const PROBLEMS_ROOT = resolveProblemsRoot();
 
 // Map from folder name to canonical category id
 const CATEGORY_MAP: Record<string, string> = {
@@ -52,16 +72,20 @@ const FOLDER_MAP: Record<string, string> = Object.entries(CATEGORY_MAP)
 
 // Helper: compute available category ids from actual folders present
 export function getAvailableCategoryIds(): string[] {
-  if (!fs.existsSync(PROBLEMS_ROOT) || !fs.statSync(PROBLEMS_ROOT).isDirectory()) return [];
-  const dirs = fs.readdirSync(PROBLEMS_ROOT, { withFileTypes: true })
-    .filter(e => e.isDirectory())
-    .map(d => d.name);
-  const set = new Set<string>();
-  for (const folder of dirs) {
-    const id = CATEGORY_MAP[folder] || folder;
-    set.add(id);
+  try {
+    if (!fs.existsSync(PROBLEMS_ROOT) || !fs.statSync(PROBLEMS_ROOT).isDirectory()) return [];
+    const dirs = fs.readdirSync(PROBLEMS_ROOT, { withFileTypes: true })
+      .filter(e => e.isDirectory())
+      .map(d => d.name);
+    const set = new Set<string>();
+    for (const folder of dirs) {
+      const id = CATEGORY_MAP[folder] || folder;
+      set.add(id);
+    }
+    return Array.from(set);
+  } catch {
+    return [];
   }
-  return Array.from(set);
 }
 
 // Removed FREE_CATEGORIES; all categories are now free
@@ -93,7 +117,6 @@ function readProblemFile(filePath: string, categoryId: string, fallbackOrder: nu
     const title = meta.title || fileName.replace(/[-_]/g, ' ');
     const difficulty: Difficulty = (meta.difficulty || 'Easy');
     const order = Number(meta.order) || fallbackOrder;
-    const isPro = Boolean(meta.isPro);
 
     return {
       _id: slug,
@@ -102,7 +125,6 @@ function readProblemFile(filePath: string, categoryId: string, fallbackOrder: nu
       description: String(body || '').trim(),
       difficulty,
       category: categoryId,
-      isPro,
       order,
       leetcodeUrl: meta.leetcodeUrl || '',
       videoUrl: meta.videoUrl || '',
@@ -118,23 +140,27 @@ function readProblemFile(filePath: string, categoryId: string, fallbackOrder: nu
 }
 
 export function listProblemsByCategory(categoryId: string): FSProblem[] {
-  const folder = FOLDER_MAP[categoryId] || categoryId; // accept direct folder id too
-  const catDir = path.join(PROBLEMS_ROOT, folder);
-  if (!fs.existsSync(catDir) || !fs.statSync(catDir).isDirectory()) return [];
-  const entries = fs.readdirSync(catDir, { withFileTypes: true })
-    .filter(e => e.isFile() && ['.md', '.json', '.txt'].includes(path.extname(e.name).toLowerCase()));
-  const problems: FSProblem[] = [];
-  let order = 1;
-  for (const e of entries) {
-    const p = readProblemFile(path.join(catDir, e.name), categoryId, order);
-    if (p) {
-      problems.push(p);
-      order++;
+  try {
+    const folder = FOLDER_MAP[categoryId] || categoryId; // accept direct folder id too
+    const catDir = path.join(PROBLEMS_ROOT, folder);
+    if (!fs.existsSync(catDir) || !fs.statSync(catDir).isDirectory()) return [];
+    const entries = fs.readdirSync(catDir, { withFileTypes: true })
+      .filter(e => e.isFile() && ['.md', '.json', '.txt'].includes(path.extname(e.name).toLowerCase()));
+    const problems: FSProblem[] = [];
+    let order = 1;
+    for (const e of entries) {
+      const p = readProblemFile(path.join(catDir, e.name), categoryId, order);
+      if (p) {
+        problems.push(p);
+        order++;
+      }
     }
+    // sort by order asc, then title
+    problems.sort((a, b) => (a.order - b.order) || a.title.localeCompare(b.title));
+    return problems;
+  } catch {
+    return [];
   }
-  // sort by order asc, then title
-  problems.sort((a, b) => (a.order - b.order) || a.title.localeCompare(b.title));
-  return problems;
 }
 
 export function listAllProblems(): FSProblem[] {
