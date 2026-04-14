@@ -1,15 +1,8 @@
 import { useState, useEffect } from "react";
-import { Button } from "@/components/button";
-import { Badge } from "@/components/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/tabs";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/select";
-import { 
-  RotateCcw, 
-} from "lucide-react";
-import { Link, useParams, useNavigate } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { problemsAPI, submissionsAPI } from "@/lib/api";
 import { onAuthChange } from "@/lib/auth";
-import AuthButton from "@/components/AuthButton";
+import SiteHeader from "@/components/SiteHeader";
 import Editor from "@monaco-editor/react";
 
 interface ProblemData {
@@ -34,7 +27,6 @@ type Submission = {
 
 const Problem = () => {
   const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("question");
   const [problem, setProblem] = useState<ProblemData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -250,52 +242,61 @@ public class Main {
   return (
     <div className="min-h-screen bg-[#131313] text-white">
       <div className="grid-noise min-h-screen">
-        <header className="sticky top-0 z-50 border-b border-white/10 bg-[#131313]/80 backdrop-blur-md">
-          <div className="mx-auto flex h-16 w-full max-w-[1500px] items-center justify-between px-6">
-            <div className="flex items-center gap-8">
-              <Link to="/" className="flex items-center gap-2">
-                <span className="font-heading text-xl font-extrabold tracking-[-0.04em] text-[#ffc02e]">CodeTrack</span>
-              </Link>
-              <nav className="hidden items-center gap-8 text-sm md:flex">
-                <Link to="/practice" className="font-heading font-bold uppercase tracking-wide text-white/80 transition-colors hover:text-[#ffc02e]">Practice</Link>
-              </nav>
-            </div>
-            <div className="flex items-center gap-3">
-              <Button variant="ghost" className="rounded-md border border-white/10 bg-[#1b1b1b] text-white hover:bg-[#222]" onClick={() => navigate(-1)}>Back</Button>
-              <AuthButton className="rounded-md border border-white/10 bg-[#1b1b1b] font-semibold text-white hover:border-[#ffc02e]/40 hover:bg-[#232323] hover:text-[#ffc02e]" />
-            </div>
-          </div>
-        </header>
+        <SiteHeader showBackButton backTo="/practice" backLabel="Back" signInFrom={`/problem/${id || ""}`} />
 
         <div className="flex h-[calc(100vh-64px)] gap-3 p-3">
           <div className="ui-surface flex w-1/2 flex-col overflow-hidden">
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="flex h-full w-full flex-col">
+            <div className="flex h-full w-full flex-col">
               <div className="border-b border-white/10 p-4">
-                <TabsList className="h-auto flex-wrap gap-2 rounded-md border border-white/10 bg-[#151515] p-1">
-                  <TabsTrigger value="question" className="rounded-md px-3 py-1 text-xs font-bold uppercase tracking-wide text-white/60 data-[state=active]:bg-[#ffc02e] data-[state=active]:text-black">Question</TabsTrigger>
-                  <TabsTrigger value="solution" className="rounded-md px-3 py-1 text-xs font-bold uppercase tracking-wide text-white/60 data-[state=active]:bg-[#ffc02e] data-[state=active]:text-black">Solution</TabsTrigger>
-                  <TabsTrigger value="submissions" className="rounded-md px-3 py-1 text-xs font-bold uppercase tracking-wide text-white/60 data-[state=active]:bg-[#ffc02e] data-[state=active]:text-black">Submissions</TabsTrigger>
-                </TabsList>
+                <div className="flex h-auto flex-wrap gap-2 rounded-md border border-white/10 bg-[#151515] p-1">
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab("question")}
+                    className={`rounded-md px-3 py-1 text-xs font-bold uppercase tracking-wide transition-colors ${activeTab === "question" ? "bg-[#ffc02e] text-black" : "text-white/60 hover:bg-white/10"}`}
+                  >
+                    Question
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab("solution")}
+                    className={`rounded-md px-3 py-1 text-xs font-bold uppercase tracking-wide transition-colors ${activeTab === "solution" ? "bg-[#ffc02e] text-black" : "text-white/60 hover:bg-white/10"}`}
+                  >
+                    Solution
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab("submissions")}
+                    className={`rounded-md px-3 py-1 text-xs font-bold uppercase tracking-wide transition-colors ${activeTab === "submissions" ? "bg-[#ffc02e] text-black" : "text-white/60 hover:bg-white/10"}`}
+                  >
+                    Submissions
+                  </button>
+                </div>
               </div>
 
               <div className="flex-1 overflow-y-auto">
-                <TabsContent value="question" className="m-0 p-6">
+                {activeTab === "question" && (
+                  <div className="m-0 p-6">
                   {loading ? (
                     <div className="text-white/60">Loading...</div>
                   ) : error ? (
                     <div className="space-y-4">
                       <h1 className="font-heading text-2xl font-extrabold">Error</h1>
                       <p className="text-white/70">{error}</p>
-                      <Button variant="ghost" className="rounded-md border border-white/10 bg-[#1a1a1a] text-white hover:bg-[#232323]" onClick={() => navigate(-1)}>Go Back</Button>
+                      <Link
+                        to="/practice"
+                        className="inline-flex rounded-md border border-white/10 bg-[#1a1a1a] px-3 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#232323]"
+                      >
+                        Go Back
+                      </Link>
                     </div>
                   ) : (
                     problem && (
                       <div className="space-y-6">
                         <div className="flex flex-wrap items-center justify-between gap-3">
                           <h1 className="font-heading text-3xl font-black tracking-[-0.04em] text-white">{problem.title}</h1>
-                          <Badge className={`rounded-md border px-3 py-1 text-xs font-bold uppercase tracking-wide ${difficultyBadgeClass(problem.difficulty)}`}>
+                          <span className={`rounded-md border px-3 py-1 text-xs font-bold uppercase tracking-wide ${difficultyBadgeClass(problem.difficulty)}`}>
                             {problem.difficulty}
-                          </Badge>
+                          </span>
                         </div>
 
                         <div className="rounded-lg border border-white/10 bg-[#171717] p-4">
@@ -330,13 +331,17 @@ public class Main {
                       </div>
                     )
                   )}
-                </TabsContent>
+                  </div>
+                )}
 
-                <TabsContent value="solution" className="m-0 p-6">
-                  <div className="rounded-lg border border-white/10 bg-[#171717] p-4 text-sm text-white/60">Coming soon.</div>
-                </TabsContent>
+                {activeTab === "solution" && (
+                  <div className="m-0 p-6">
+                    <div className="rounded-lg border border-white/10 bg-[#171717] p-4 text-sm text-white/60">Coming soon.</div>
+                  </div>
+                )}
 
-                <TabsContent value="submissions" className="m-0 p-6">
+                {activeTab === "submissions" && (
+                  <div className="m-0 p-6">
                   <div className="space-y-3">
                     <div className="grid grid-cols-5 gap-4 border-b border-white/10 pb-2 text-xs font-bold uppercase tracking-wide text-white/60">
                       <div>Time</div>
@@ -359,47 +364,53 @@ public class Main {
                               {s.results && s.results.length > 0 ? `${s.results.filter(r => r.passed).length}/${s.results.length} passed` : '-'}
                             </div>
                             <div className="text-right">
-                              <Button size="sm" variant="ghost" className="text-[#ffc02e] hover:bg-[#ffc02e]/10 hover:text-[#ffc02e]">View</Button>
+                              <button
+                                type="button"
+                                className="rounded-md px-2 py-1 text-xs font-semibold text-[#ffc02e] transition-colors hover:bg-[#ffc02e]/10 hover:text-[#ffc02e]"
+                              >
+                                View
+                              </button>
                             </div>
                           </div>
                         ))}
                       </div>
                     )}
                   </div>
-                </TabsContent>
+                  </div>
+                )}
 
               </div>
-            </Tabs>
+            </div>
           </div>
 
           <div className="ui-surface flex w-1/2 flex-col" style={{ minHeight: 0 }}>
             <div className="flex items-center justify-between border-b border-white/10 p-4">
               <div className="flex items-center gap-4">
-                <Select value={language} onValueChange={(v) => setLanguage(v as 'python' | 'java')}>
-                  <SelectTrigger className="w-32 border-white/15 bg-[#151515] text-white">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent className="border-white/10 bg-[#1b1b1b] text-white">
-                    <SelectItem value="python">Python</SelectItem>
-                    <SelectItem value="java">Java</SelectItem>
-                  </SelectContent>
-                </Select>
+                <select
+                  value={language}
+                  onChange={(e) => setLanguage(e.target.value as 'python' | 'java')}
+                  className="w-32 rounded-md border border-white/15 bg-[#151515] px-3 py-1.5 text-sm text-white"
+                >
+                  <option value="python">Python</option>
+                  <option value="java">Java</option>
+                </select>
               </div>
               <div className="flex items-center gap-2">
-                {/* <Button variant="ghost" size="sm" className="text-white/70 hover:bg-white/10 hover:text-white">
-                  <Settings className="h-4 w-4" />
-                </Button> */}
-                <Button variant="ghost" size="sm" className="text-white/70 hover:bg-white/10 hover:text-white" onClick={() => setCode(defaultSnippets[language])}>
-                  <RotateCcw className="h-4 w-4" />
-                </Button>
-                {/* <Button v-
-                 */}
-                <Button size="sm" variant="outline" className="border-white/20 bg-[#1b1b1b] text-white hover:bg-[#232323]" onClick={onRun} disabled={running}>
+                <button
+                  type="button"
+                  className="rounded-md border border-white/20 bg-[#1b1b1b] px-3 py-1.5 text-sm font-semibold text-white transition-colors hover:bg-[#232323] disabled:cursor-not-allowed disabled:opacity-60"
+                  onClick={onRun}
+                  disabled={running}
+                >
                   {running ? 'Running...' : "Run"}
-                </Button>
-                <Button size="sm" className="bg-[#ffc02e] font-bold uppercase tracking-wide text-black hover:bg-[#ffca49]" onClick={onSubmit}>
+                </button>
+                <button
+                  type="button"
+                  className="rounded-md bg-[#ffc02e] px-3 py-1.5 text-sm font-bold uppercase tracking-wide text-black transition-colors hover:bg-[#ffca49]"
+                  onClick={onSubmit}
+                >
                   Submit
-                </Button>
+                </button>
               </div>
             </div>
 

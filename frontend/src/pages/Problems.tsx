@@ -1,13 +1,9 @@
 import { useState, useEffect } from "react";
-import { Button } from "@/components/button";
-import { Badge } from "@/components/badge";
-import { Input } from "@/components/input";
-import { Progress } from "@/components/progress";
 import { CheckCircle, Circle, Search, Grid3X3, Shuffle, Trash2, HelpCircle } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { problemsAPI, userAPI } from "@/lib/api";
-import AuthButton from "@/components/AuthButton";
 import { onAuthChange } from "@/lib/auth";
+import SiteHeader from "@/components/SiteHeader";
 
 interface Category {
   id: string;
@@ -82,36 +78,24 @@ const Problems = () => {
   return (
     <div className="min-h-screen bg-[#131313] text-white">
       <div className="grid-noise min-h-screen">
-        <header className="sticky top-0 z-50 border-b border-white/10 bg-[#131313]/80 backdrop-blur-md">
-          <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-6">
-            <Link to="/" className="flex items-center gap-2">
-              <span className="font-heading text-xl font-extrabold tracking-[-0.04em] text-[#ffc02e]">
-                CodeTrack
-              </span>
-            </Link>
-
-            <div className="flex items-center space-x-4">
-              <AuthButton className="rounded-md border border-white/10 bg-[#1b1b1b] font-semibold text-white hover:border-[#ffc02e]/40 hover:bg-[#232323] hover:text-[#ffc02e]" />
-            </div>
-          </div>
-        </header>
+        <SiteHeader signInFrom="/practice" />
 
         <div className="mx-auto w-full max-w-7xl px-6 py-8">
           <div className="ui-surface animate-rise">
             <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 px-5 py-4">
               <div className="flex items-center gap-3">
                 <p className="font-heading text-xs font-bold uppercase tracking-[0.14em] text-[#ff006e]">Practice Mission Control</p>
-                <Badge className="rounded-md border border-white/10 bg-white/5 px-2 py-1 text-[10px] uppercase tracking-[0.1em] text-white/60">
+                <span className="rounded-md border border-white/10 bg-white/5 px-2 py-1 text-[10px] uppercase tracking-[0.1em] text-white/60">
                   {categories.length} Topics
-                </Badge>
+                </span>
               </div>
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-white/40" />
-                <Input
+                <input
                   placeholder="Search problem title"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  className="h-9 w-64 border-white/15 bg-[#141414] pl-10 text-white placeholder:text-white/35"
+                  className="h-9 w-64 rounded-md border border-white/15 bg-[#141414] pl-10 pr-3 text-white placeholder:text-white/35"
                 />
               </div>
               
@@ -132,12 +116,17 @@ const Problems = () => {
                       </p>
                     </div>
                     {selectedCategory === category.id && (
-                      <Badge className="rounded-md border border-[#ffc02e]/35 bg-[#ffc02e]/15 px-2 py-1 text-xs font-bold uppercase tracking-wide text-[#ffc02e]">Active</Badge>
+                      <span className="rounded-md border border-[#ffc02e]/35 bg-[#ffc02e]/15 px-2 py-1 text-xs font-bold uppercase tracking-wide text-[#ffc02e]">Active</span>
                     )}
                   </div>
 
                   <div className="mt-3">
-                    <Progress value={category.total ? (category.solved / category.total) * 100 : 0} className="h-2 bg-black/40" />
+                    <div className="h-2 overflow-hidden rounded bg-black/40">
+                      <div
+                        className="h-full bg-[#ffc02e] transition-all"
+                        style={{ width: `${category.total ? (category.solved / category.total) * 100 : 0}%` }}
+                      />
+                    </div>
                   </div>
 
                   {selectedCategory === category.id && (
@@ -146,7 +135,6 @@ const Problems = () => {
                         <div className="col-span-1">Status</div>
                         <div className="col-span-7">Problem</div>
                         <div className="col-span-2">Difficulty</div>
-                        {/* <div className="col-span-2">Action</div> */}
                       </div>
 
                       <div className="space-y-2">

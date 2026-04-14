@@ -4,7 +4,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* CodeTrack - Kinetic High-Density Editorial */
 
 @layer base {
   :root {
